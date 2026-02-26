@@ -23,7 +23,7 @@ int main() {
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY; // Listen on all interfaces
-    addr.sin_port = htons(8002);       // Port 8002 in Network Byte Order
+    addr.sin_port = htons(8080);       // Port 8002 in Network Byte Order
 
     if (bind(listenFd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
         std::cerr << "Bind failed. Is port 8002 busy?" << std::endl;
@@ -70,15 +70,4 @@ int main() {
     close(listenFd);
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
 
