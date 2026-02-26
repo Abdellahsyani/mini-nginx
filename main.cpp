@@ -16,10 +16,10 @@ int main() {
         return 1; 
     }
 
-    // 2. Set to Non-Blocking (Required for 1337)
+    //None blocking
     fcntl(listenFd, F_SETFL, O_NONBLOCK);
 
-    // 3. Bind to Port 8002 (The "Phone Number")
+    // Bind to Port 8002
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY; // Listen on all interfaces
