@@ -7,6 +7,7 @@
 #include <unistd.h>     
 #include <arpa/inet.h>  
 #include <fcntl.h>      
+#include <cstring>
 
 int main() {
     // 1. Create the Socket (The "Phone Line")
@@ -21,6 +22,7 @@ int main() {
 
     // Bind to Port 8002
     struct sockaddr_in addr;
+    memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY; // Listen on all interfaces
     addr.sin_port = htons(8080);       // Port 8002 in Network Byte Order
@@ -39,14 +41,17 @@ int main() {
     pfd.fd = listenFd;
     pfd.events = POLLIN; // Only look for incoming data/connections
 
+    socklen_t clientLen = sizeof(addr);
     while (true) {
         int ret = poll(&pfd, 1, -1); // Wait forever for an event
         if (ret > 0 && (pfd.revents & POLLIN)) {
             
             // 6. Accept the connection (The "Front Door")
-            int clientFd = accept(listenFd, NULL, NULL);
+            int clientFd = accept(listenFd, (struct sockaddr *)&addr, &clientLen);
             if (clientFd != -1) {
                 std::cout << "Client connected! FD: " << clientFd << std::endl;
+                char* clientIp = inet_ntoa(addr.sin_addr);
+                std::cout << "New connection from: " << clientIp << " on FD: " << clientFd << std::endl;
 
                 // 7. Receive Data (Into our local buffer)
                 char buffer[1024];
