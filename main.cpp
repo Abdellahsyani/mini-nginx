@@ -41,6 +41,7 @@ int main() {
     pfd.fd = listenFd;
     pfd.events = POLLIN; // Only look for incoming data/connections
 
+
     socklen_t clientLen = sizeof(addr);
     while (true) {
         int ret = poll(&pfd, 1, -1); // Wait forever for an event
