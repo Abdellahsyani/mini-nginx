@@ -78,7 +78,7 @@ int main() {
             } else {
               // 8. Send a simple Response and Close
               std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello World!";
-              send(clientFd, response.c_str(), response.size(), 0);
+              send(fds[i].fd, response.c_str(), response.size(), 0);
 
               close(clientFd);
               // Process the request...
