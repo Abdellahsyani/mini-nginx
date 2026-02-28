@@ -23,7 +23,7 @@ int main() {
   fcntl(socketfd, F_SETFL, O_NONBLOCK);
 
   struct sockaddr_in addr;
-  memset(addr, 0, sizeof(addr));
+  memset(&addr, 0, sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = htons(8080);
   addr.sin_addr.s_addr = INADDR_ANY;
@@ -54,13 +54,36 @@ int main() {
 
   if (epoll_ctl(epollfd, EPOLL_CTL_ADD, socketfd, &ev) == -1)
   {
-    std::cerr << "Error: epoll_ctl fail" << std::end;
+    std::cerr << "Error: epoll_ctl fail" << std::endl;
     return 1;
   }
 
 
   while (true) {
+    int nfds = epoll_wait(epollfd, events, MAX_EVENTS, -1);
 
+    for (int n = 0; n < nfds; ++n) {
+      if (events[n].data.fd == socketfd) {
+        int clientfd = accept(socketfd, NULL, NULL);
+
+        fcntl(clientfd, F_SETFL, O_NONBLOCK);
+        ev.events = EPOLLIN;
+        ev.data.fd = clientfd;
+        epoll_ctl(epollfd, EPOLL_CTL_ADD, clientfd, &ev);
+        std::cout << "New client added to epoll!" << std::endl;
+      } else {
+        char buffer[1024];
+        int b = recv(events[n].data.fd, buffer, 1024, 0);
+        if (b <= 0) {
+          epoll_ctl(epollfd, EPOLL_CTL_DEL, events[n].data.fd, NULL);
+          close(events[n].data.fd);
+        } else {
+          // Send response (In a real Webserv, use EPOLLOUT first!)
+          std::string res = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello!";
+          send(events[n].data.fd, res.c_str(), res.size(), 0);
+        }
+      }
+    }
   }
 
   return 0;
