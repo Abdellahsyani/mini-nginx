@@ -1,21 +1,20 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <sys/socket.h> 
-#include <netinet/in.h> 
-#include <poll.h> 
-#include <unistd.h>     
-#include <arpa/inet.h>  
-#include <fcntl.h>      
+#include <arpa/inet.h>
 #include <cstring>
+#include <fcntl.h>
+#include <iostream>
+#include <netinet/in.h>
+#include <poll.h>
+#include <string>
 #include <sys/epoll.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <vector>
 
 #define MAX_EVENTS 100
 
 int main() {
   int socketfd = socket(AF_INET, SOCK_STREAM, 0);
-  if (socketfd == -1)
-  {
+  if (socketfd == -1) {
     std::cerr << "Error: can't open socket" << std::endl;
     return 1;
   }
@@ -28,7 +27,7 @@ int main() {
   addr.sin_port = htons(8080);
   addr.sin_addr.s_addr = INADDR_ANY;
 
-  if (bind(socketfd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
+  if (bind(socketfd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
     std::cerr << "Error: can't bind" << std::endl;
     close(socketfd);
     return 1;
@@ -39,11 +38,11 @@ int main() {
     return 1;
   };
 
-  std::cout << "Server waiting for incoming requests ................." << std::endl;
+  std::cout << "Server waiting for incoming requests ................."
+            << std::endl;
 
   int epollfd = epoll_create1(0);
-  if (epollfd == -1)
-  {
+  if (epollfd == -1) {
     std::cerr << "Error: fail to create epoll" << std::endl;
     return 1;
   }
@@ -51,13 +50,10 @@ int main() {
   ev.data.fd = socketfd;
   ev.events = EPOLLIN;
 
-
-  if (epoll_ctl(epollfd, EPOLL_CTL_ADD, socketfd, &ev) == -1)
-  {
+  if (epoll_ctl(epollfd, EPOLL_CTL_ADD, socketfd, &ev) == -1) {
     std::cerr << "Error: epoll_ctl fail" << std::endl;
     return 1;
   }
-
 
   while (true) {
     int nfds = epoll_wait(epollfd, events, MAX_EVENTS, -1);
@@ -79,8 +75,10 @@ int main() {
           close(events[n].data.fd);
         } else {
           // Send response (In a real Webserv, use EPOLLOUT first!)
-          std::string res = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello!";
+          std::string res =
+              "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello world!";
           send(events[n].data.fd, res.c_str(), res.size(), 0);
+          close(events[n].data.fd);
         }
       }
     }
@@ -88,4 +86,3 @@ int main() {
 
   return 0;
 }
-
