@@ -1,7 +1,7 @@
 #ifndef LOCATION_HPP
 #define LOCATION_HPP
 
-class Location {
+class Location : public ServerConfig {
 public:
   // Constructors
   // ==============
