@@ -8,11 +8,6 @@ private:
   int _epollFd;
   struct epoll_event _ev;
   struct epoll_event _events;
-
-  void _handleEvents();
-  void acceptNewConnection(int listenFd);
-
-
 public:
   // Constructors
   // ==============
@@ -23,8 +18,6 @@ public:
 
   // Methods
   // =========
-  void run();
-  void init(std::vector<ServerConfig&> Configs);
 
 };
 
