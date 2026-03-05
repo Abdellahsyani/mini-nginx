@@ -6,6 +6,9 @@ private:
   std::string _method;
   std::string _uri;
   std::map<std::string, std::string> _headers;
+  std::string _body;
+  bool _isHeaderParsed;
+
 public:
   // Constructors
   // ==============
@@ -16,6 +19,9 @@ public:
 
   // Methods
   // =========
+  void parse(std::string data);
+  std::string getMethod();
+  std::string getHeader(std::string key);
 
 };
 
