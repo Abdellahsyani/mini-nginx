@@ -8,6 +8,7 @@ private:
   int _epollFd;
   struct epoll_event _ev;
   struct epoll_event _events;
+  std::map<int, ServerConfig> _serv_config
 
   void _handleEvents();
   void acceptNewConnection(int listenFd);

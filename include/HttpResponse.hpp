@@ -2,6 +2,10 @@
 #define HTTPRESPONSE_HPP
 
 class HttpResponse {
+private:
+  std::string _method;
+  std::string _uri;
+  std::map<std::string, std::string> _headers;
 public:
   // Constructors
   // ==============

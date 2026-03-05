@@ -16,6 +16,7 @@ public:
 
   // Methods
   // =========
+  std::vector<ServerConfig> confServers;
 
 };
 
