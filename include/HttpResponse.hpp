@@ -3,6 +3,9 @@
 
 class HttpResponse {
 private:
+  int _statusCode;
+  std::string _content;
+  std::string _fullResponse;
 
 public:
   // Constructors
@@ -14,6 +17,9 @@ public:
 
   // Methods
   // =========
+  void buildHeader();
+  void setBody(std::string body);
+  std::string getFullResponse();
 
 };
 
